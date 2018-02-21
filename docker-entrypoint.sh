@@ -7,7 +7,7 @@ exec ss-server -s $SERVER_ADDR \
                -m $METHOD \
                -t $TIMEOUT \
                -d $DNS_ADDR \
-               -a $USER \
+               -a $USER_EXEC \
                --plugin $PLUGIN \
                --plugin-opts $PLUGIN_OPTS \
                --fast-open \
