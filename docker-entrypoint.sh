@@ -6,10 +6,27 @@ exec ss-server -s $SERVER_ADDR \
                -k $PASSWORD \
                -m $METHOD \
                -t $TIMEOUT \
-               --plugin obfs-server \
-               --plugin-opts "${OBFS_OPTS}" \
+               -d $DNS_ADDR \
+               -a $USER \
+               --plugin $PLUGIN \
+               --plugin-opts $PLUGIN_OPTS \
                --fast-open \
-               -u
+               -u \
+               --no-delay
+
+ETH=$(eval "ifconfig | grep 'eth0'| wc -l")
+
+if [[ "$SPEED" == '1' ]] && [[ "$ETH"  ==  '1' ]] ; then
+	nohup /usr/local/bin/net_speeder eth0 "ip" >/dev/null 2>&1 &
+else
+  killall net_speeder &
+fi
+
+if [[ "$SPEED" == '1' ]] && [[ "$ETH"  ==  '0' ]] ; then
+	nohup /usr/local/bin/net_speeder venet0 "ip" >/dev/null 2>&1 &
+else
+  killall net_speeder &
+fi
 
 
 
