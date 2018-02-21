@@ -11,13 +11,17 @@ ARG SS_OBFS_VER=0.0.5
 ARG SS_URL=https://github.com/shadowsocks/shadowsocks-libev/archive/v$SS_VER.tar.gz
 ARG SS_OBFS_URL=https://github.com/shadowsocks/simple-obfs/archive/v$SS_OBFS_VER.tar.gz
 
+ENV NETSPEEDER_DEP libnet libpcap
+ENV NETSPEEDER_BUILD_DEP libnet-dev libpcap-dev
+ENV NETSPEEDER_URL https://github.com/snooda/net-speeder.git
+ENV NETSPEEDER_DIR net-speeder
+
+RUN set -ex \
+    && apk --no-cache --update add $NETSPEEDER_DEP $NETSPEEDER_BUILD_DEP
+
 RUN set -ex && \
     apk add --no-cache --virtual .build-deps \
                                 git \
-                                libnet1 \
-                                libnet1-dev \
-                                libpcap0.8 \
-                                libpcap0.8-dev \
                                 autoconf \
                                 automake \
                                 make \
@@ -33,12 +37,16 @@ RUN set -ex && \
                                 tar \
                                 c-ares-dev && \
 
-    cd /tmp/ && \
-    git clone https://github.com/snooda/net-speeder.git && \
-    cd net-speeder && \
-    sh build.sh && \
-    mv net_speeder /usr/local/bin/ && \
-    chmod +x /usr/local/bin/net_speeder && \
+RUN set -ex \
+    && git clone $NETSPEEDER_URL $NETSPEEDER_DIR \
+    && cd $NETSPEEDER_DIR \
+    && sh build.sh \
+    && mv net_speeder /usr/local/bin/ \
+    && cd .. \
+    && rm -rf $NETSPEEDER_DIR \
+    && apk del --purge $NETSPEEDER_BUILD_DEP
+    
+RUN set -ex \
     cd /tmp/ && \
     git clone https://github.com/shadowsocks/shadowsocks-libev.git && \
     cd shadowsocks-libev && \
@@ -81,7 +89,9 @@ ENV USER nobody
 EXPOSE $SERVER_PORT/tcp
 EXPOSE $SERVER_PORT/udp
 
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+COPY ./docker-entrypoint.sh /
 
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+RUN chmod +x /usr/local/bin/net_speeder
+RUN chmod +x /docker-entrypoint.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
