@@ -35,7 +35,7 @@ RUN set -ex \
                                 mbedtls-dev \
                                 pcre-dev \
                                 tar \
-                                c-ares-dev \
+                                c-ares-dev 
 
 
 RUN set -ex \
@@ -47,7 +47,7 @@ RUN set -ex \
     && rm -rf $NETSPEEDER_DIR \
     && apk del --purge $NETSPEEDER_BUILD_DEP
     
-RUN set -ex \
+RUN set -ex && \
     cd /tmp/ && \
     git clone https://github.com/shadowsocks/shadowsocks-libev.git && \
     cd shadowsocks-libev && \
