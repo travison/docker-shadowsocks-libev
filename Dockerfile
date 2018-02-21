@@ -3,7 +3,7 @@
 #
 
 FROM alpine:edge
-MAINTAINER Tony.Shao <xiocode@gmail.com>
+MAINTAINER Travison
 
 ARG SS_VER=3.1.3
 ARG SS_OBFS_VER=0.0.5
@@ -14,6 +14,10 @@ ARG SS_OBFS_URL=https://github.com/shadowsocks/simple-obfs/archive/v$SS_OBFS_VER
 RUN set -ex && \
     apk add --no-cache --virtual .build-deps \
                                 git \
+                                libnet1 \
+                                libnet1-dev \
+                                libpcap0.8 \
+                                libpcap0.8-dev \
                                 autoconf \
                                 automake \
                                 make \
@@ -29,6 +33,12 @@ RUN set -ex && \
                                 tar \
                                 c-ares-dev && \
 
+    cd /tmp/ && \
+    git clone https://github.com/snooda/net-speeder.git && \
+    cd net-speeder && \
+    sh build.sh && \
+    mv net_speeder /usr/local/bin/ && \
+    chmod +x /usr/local/bin/net_speeder && \
     cd /tmp/ && \
     git clone https://github.com/shadowsocks/shadowsocks-libev.git && \
     cd shadowsocks-libev && \
@@ -57,20 +67,21 @@ RUN set -ex && \
     apk del .build-deps && \
     rm -rf /tmp/*
 
-USER nobody
 
 ENV SERVER_ADDR 0.0.0.0
 ENV SERVER_PORT 8388
 ENV PASSWORD 1234567890
-ENV METHOD chacha20
-ENV TIMEOUT 3600
-ENV DNS_ADDR 8.8.8.8
-ENV DNS_ADDR_2 8.8.4.4
-ENV OBFS_OPTS obfs=http;obfs-host=www.bing.com
+ENV METHOD aes-256-gcm
+ENV TIMEOUT 600
+ENV DNS_ADDR 8.8.4.4
+ENV PLUGIN obfs-server
+ENV PLUGIN_OPTS obfs=tls
+ENV USER nobody
 
 EXPOSE $SERVER_PORT/tcp
 EXPOSE $SERVER_PORT/udp
 
-COPY ./docker-entrypoint.sh /
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
