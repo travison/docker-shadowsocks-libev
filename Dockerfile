@@ -19,8 +19,8 @@ ENV NETSPEEDER_DIR net-speeder
 RUN set -ex \
     && apk --no-cache --update add $NETSPEEDER_DEP $NETSPEEDER_BUILD_DEP
 
-RUN set -ex && \
-    apk add --no-cache --virtual .build-deps \
+RUN set -ex \
+    && apk add --no-cache --virtual .build-deps \
                                 git \
                                 autoconf \
                                 automake \
@@ -35,7 +35,8 @@ RUN set -ex && \
                                 mbedtls-dev \
                                 pcre-dev \
                                 tar \
-                                c-ares-dev && \
+                                c-ares-dev \
+
 
 RUN set -ex \
     && git clone $NETSPEEDER_URL $NETSPEEDER_DIR \
