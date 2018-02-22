@@ -92,9 +92,9 @@ ENV SPEED 1
 EXPOSE $SERVER_PORT/tcp
 EXPOSE $SERVER_PORT/udp
 
-COPY ./docker-entrypoint.sh /
+COPY docker-entrypoint.sh /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/net_speeder
-RUN chmod +x /docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
