@@ -1,17 +1,17 @@
 #!/bin/bash
 set -e
-ETH=$(eval "ifconfig | grep 'eth0'| wc -l")
+#ETH=$(eval "ifconfig | grep 'eth0'| wc -l")
 
-if [[ "$SPEED" == '1' ]] && [[ "$ETH"  ==  '1' ]] ; then
-	nohup /usr/local/bin/net_speeder eth0 "ip" >/dev/null 2>&1 &
-else
-  killall net_speeder &
-fi
-if [[ "$SPEED" == '1' ]] && [[ "$ETH"  ==  '0' ]] ; then
-	nohup /usr/local/bin/net_speeder venet0 "ip" >/dev/null 2>&1 &
-else
-  killall net_speeder &
-fi
+#if [[ "$SPEED" == '1' ]] && [[ "$ETH"  ==  '1' ]] ; then
+	#nohup /usr/local/bin/net_speeder eth0 "ip" >/dev/null 2>&1 &
+#else
+#  killall net_speeder &
+#fi
+#if [[ "$SPEED" == '1' ]] && [[ "$ETH"  ==  '0' ]] ; then
+	#nohup /usr/local/bin/net_speeder venet0 "ip" >/dev/null 2>&1 &
+#else
+  #killall net_speeder &
+#fi
 
 exec ss-server -s $SERVER_ADDR \
                -p $SERVER_PORT \
